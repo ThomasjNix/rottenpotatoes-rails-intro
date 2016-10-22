@@ -11,7 +11,21 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @movies = Movie.all
+    @all_ratings = Movie.uniq.pluck(:rating)
+    checked_boxes = params[:ratings] || []
+    if :sort_relation!=nil
+      if checked_boxes == []
+        @movies=Movie.order(params[:sort_relation])
+      else
+        @movies=Movie.order(params[:sort_relation]).where(rating: checked_boxes.keys)
+      end
+    else
+      if checked_boxes == []
+        @movies=Movie.all
+      else
+        @movies=Movie.where(rating: checked_boxes.keys)
+      end
+    end
   end
 
   def new
